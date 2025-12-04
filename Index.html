@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <meta property="og:title" content="Приглашение на День Рождения">
+  <meta property="og:description" content="18 Января. Жду тебя в сказке!">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="photo.jpg">
+  <meta property="og:url" content="">
+
+  <title>Приглашение</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-gradient: radial-gradient(circle at center, #2b1331, #0f0c29);
+      --paper: #fcf5e5;
+      --paper-back: #f0e6d2;
+
+      --gold: #c5a059;
+      --gold-2: #fcf6ba;
+      --gold-shine: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+
+      --red: #8a1c1c;
+
+      --shadow: 0 14px 40px rgba(0,0,0,.38);
+      --shadow-soft: 0 8px 22px rgba(0,0,0,0.25);
+      --radius: 16px;
+
+      --flip-duration: 1.06s;
+      --flip-ease: cubic-bezier(0.64, 0.04, 0.32, 1);
+
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+
+    body{
+      margin: 0;
+      background: var(--bg-gradient);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Cormorant Garamond', serif;
+      overflow: hidden;
+      perspective: 2600px;
+      min-height: 100dvh;
+      height: 100dvh;
+      touch-action: pan-y;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::before{
+      content:""; position: fixed; inset: 0; pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(197,160,89,.10), transparent 46%),
+        radial-gradient(circle at 84% 68%, rgba(252,246,186,.08), transparent 48%),
+        radial-gradient(circle at 50% 105%, rgba(255,255,255,.06), transparent 55%);
+      opacity: .95;
+      filter: blur(2px);
+    }
+
+    #fx{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .music-btn{
+      position: fixed;
+      top: 18px; right: 18px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(197,160,89,.9);
+      color: var(--gold);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 500;
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      background: rgba(20, 10, 30, .20);
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+      opacity: .95;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .music-btn:hover{ transform: scale(1.08); }
+    .music-btn.is-playing{
+      box-shadow: 0 0 18px rgba(197,160,89,.38);
+      animation: pulseMusic 2.2s infinite;
+    }
+    @keyframes pulseMusic{
+      0% { box-shadow: 0 0 0 0 rgba(197,160,89, 0.40); }
+      70% { box-shadow: 0 0 0 12px rgba(197,160,89, 0.00); }
+      100% { box-shadow: 0 0 0 0 rgba(197,160,89, 0.00); }
+    }
+
+    .book{
+      width: 90vw;
+      max-width: 435px;
+      height: min(620px, 84dvh);
+      position: relative;
+      transform-style: preserve-3d;
+      z-index: 30;
+      filter: drop-shadow(var(--shadow));
+      transform: rotateY(-8deg) rotateX(1.5deg);
+      transition: transform 0.45s ease;
+      will-change: transform;
+    }
+
+    body.opened .book{
+      transform: rotateY(-6deg) rotateX(1.2deg);
+    }
+    body.back-closed .book{
+      transform: rotateY(6deg) rotateX(1.1deg);
+    }
+
+    .book::before{
+      content:"";
+      position: absolute;
+      inset: -20px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 15% 30%, rgba(252,246,186,.10), transparent 55%),
+        radial-gradient(circle at 85% 70%, rgba(197,160,89,.10), transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 65%);
+      filter: blur(10px);
+      opacity: .95;
+      z-index: -1;
+      animation: aura 6s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes aura{
+      0%,100%{ transform: translateY(0px) scale(1); opacity:.85; }
+      50%{ transform: translateY(-6px) scale(1.02); opacity:1; }
+    }
+
+    /* Имитация толщины страниц справа */
+    .book::after{
+      content:"";
+      position:absolute;
+      top: 10px;
+      bottom: 10px;
+      right: -12px;
+      width: 18px;
+      border-radius: 0 18px 18px 0;
+      background:
+        linear-gradient(to right, rgba(255,255,255,.18), rgba(0,0,0,.12)),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(0,0,0,.08) 0px,
+          rgba(0,0,0,.08) 1px,
+          rgba(255,255,255,.0) 3px,
+          rgba(255,255,255,.0) 6px
+        );
+      opacity: .55;
+      pointer-events:none;
+      transform: translateZ(-1px);
+      filter: blur(.2px);
+      transition: opacity .35s ease;
+    }
+    body.back-closed .book::after{ opacity: .28; }
+
+    /* ===== Задняя обложка (не страница!) ===== */
+    .backCover{
+      position:absolute;
+      inset:0;
+      border-radius: 4px var(--radius) var(--radius) 4px;
+      background: #2b1331;
+      border: 4px double var(--gold);
+      box-shadow: var(--shadow-soft);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateZ(2px) scale(0.985);
+      transition: opacity .55s ease, transform .55s ease;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding: 30px 20px calc(30px + var(--safe-bottom));
+      overflow:hidden;
+    }
+    .backCover::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(197,160,89,.10), transparent 58%),
+        linear-gradient(120deg,
+          rgba(255,255,255,0) 35%,
+          rgba(252,246,186,.20) 48%,
+          rgba(255,255,255,0) 62%);
+      transform: translateX(-90%) rotate(10deg);
+      opacity: .55;
+      mix-blend-mode: screen;
+      animation: coverShimmer 7s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes coverShimmer{
+      0%, 20% { transform: translateX(-95%) rotate(10deg); opacity: 0; }
+      35%{ opacity: .7; }
+      55% { transform: translateX(95%) rotate(10deg); opacity: 0; }
+      100%{ transform: translateX(95%) rotate(10deg); opacity: 0; }
+    }
+
+    body.back-closed .backCover{
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateZ(2px) scale(1);
+    }
+
+    /* ===== Страницы ===== */
+    .page{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+
+      transform-origin: left center;
+      transform-style: preserve-3d;
+
+      border-radius: 4px var(--radius) var(--radius) 4px;
+      box-shadow: var(--shadow-soft);
+
+      transition: transform var(--flip-duration) var(--flip-ease);
+      pointer-events: none;
+      will-change: transform;
+
+      -webkit-transform-style: preserve-3d;
+      -webkit-backface-visibility: hidden;
+      transform: translateZ(0.1px);
+    }
+
+    .page.active-page{ pointer-events: auto; }
+
+    /* Вперёд: лист почти на 180 */
+    .page.flipped{
+      transform: rotateY(-179.7deg) translateX(-2px) translateZ(0.1px);
+      pointer-events: none;
+    }
+
+    /* Обложка листается не на 180 — чтобы не "исчезала" */
+    .page.cover.flipped{
+      transform: rotateY(-165deg) translateX(-8px) translateZ(0.1px);
+    }
+
+    .page.turning{
+      filter: drop-shadow(0 22px 28px rgba(0,0,0,.33));
+    }
+
+    /* z-index стек: 6 страниц */
+    #p1{ z-index: 6; } #p2{ z-index: 5; } #p3{ z-index: 4; }
+    #p4{ z-index: 3; } #p5{ z-index: 2; } #p6{ z-index: 1; }
+
+    .front, .back{
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+
+      padding: 30px 20px calc(30px + var(--safe-bottom));
+      text-align: center;
+
+      border: 1px solid #e0d0b0;
+      border-radius: 4px var(--radius) var(--radius) 4px;
+
+      background-color: var(--paper);
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      transform: translateZ(0.2px);
+    }
+
+    .back{
+      transform: rotateY(180deg) translateZ(0.2px);
+      background-color: var(--paper-back);
+      background-image: repeating-linear-gradient(45deg,
+        rgba(197,160,89,0.10) 0, rgba(197,160,89,0.10) 10px,
+        transparent 10px, transparent 22px
+      );
+    }
+
+    /* Золотой край страницы справа */
+    .front::after{
+      content:"";
+      position:absolute;
+      top: 0; bottom: 0;
+      right: 0;
+      width: 16px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: linear-gradient(90deg,
+        rgba(197,160,89,0.00),
+        rgba(197,160,89,0.22),
+        rgba(252,246,186,0.40),
+        rgba(255,255,255,0.25),
+        rgba(197,160,89,0.08)
+      );
+      opacity: .55;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+
+    /* Блик движения только в turning — без "вспышек по центру" */
+    .page.turning .front::before{
+      content:"";
+      position:absolute;
+      top:-10%;
+      bottom:-10%;
+      right:-40px;
+      width: 110px;
+      background: radial-gradient(circle at 40% 50%,
+        rgba(255,255,255,.32),
+        rgba(252,246,186,.16),
+        rgba(197,160,89,0.0) 65%);
+      filter: blur(6px);
+      opacity: 0;
+      transform: translateX(0);
+      pointer-events:none;
+      animation: edgeGlint 0.95s ease-out forwards;
+    }
+    @keyframes edgeGlint{
+      0%{ opacity: 0; transform: translateX(-10px); }
+      35%{ opacity: .85; }
+      100%{ opacity: 0; transform: translateX(30px); }
+    }
+
+    h1, h2{
+      font-family: 'Great Vibes', cursive;
+      margin: 6px 0;
+      line-height: 1.1;
+    }
+    h1{
+      font-size: 3.6rem;
+      background: var(--gold-shine);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    h2{
+      font-size: 2.28rem;
+      color: var(--red);
+      margin-top: 14px;
+    }
+    p{
+      font-size: 1.12rem;
+      color: #2f2f2f;
+      margin: 8px 0;
+      line-height: 1.45;
+    }
+    .muted{ font-size: .95rem; color: #6e6e6e; }
+
+    .divider{ width: 150px; height: 22px; margin: 14px auto; opacity: .90; }
+    .divider path{ fill: none; stroke: var(--gold); stroke-width: 2; }
+
+    .icon-lg{
+      font-size: 2.85rem;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 4px 2px rgba(0,0,0,0.1));
+    }
+
+    /* Контент: показываем и на active-page, и на preactive — чтобы не было "пустой паузы" */
+    .content-box{
+      width: 100%;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .78s ease, transform .78s ease;
+      pointer-events: none;
+    }
+    .page.active-page .content-box,
+    .page.preactive .content-box{
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      transition-delay: .22s;
+    }
+
+    .nav-container{
+      width: 100%;
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+      height: 54px;
+    }
+
+    .btn-nav{
+      background: none;
+      border: none;
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.85rem;
+      color: var(--red);
+      cursor: pointer;
+      padding: 6px 14px;
+      opacity: .90;
+      transition: transform .18s ease, color .18s ease, opacity .18s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-nav:hover{ transform: scale(1.1); color: var(--gold); opacity: 1; }
+    .rot180{ transform: rotate(180deg); }
+    .rot180:hover{ transform: rotate(180deg) scale(1.1); }
+
+    .countdown{
+      width: 100%;
+      margin: 12px auto 6px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(197,160,89,.35);
+      background: rgba(255,255,255,0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .countdown-grid{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .cd-item{
+      background: rgba(252,246,186,.26);
+      border-radius: 10px;
+      padding: 6px 5px;
+      border: 1px solid rgba(197,160,89,.18);
+    }
+    .cd-num{ font-weight: 700; font-size: 1.22rem; color: #222; }
+    .cd-lbl{ font-size: 0.82rem; color: #666; }
+
+    .gallery{
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 6px 12px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+      scroll-snap-type: x mandatory;
+    }
+    .gallery::-webkit-scrollbar{ display: none; }
+
+    .polaroid{
+      flex: 0 0 auto;
+      width: 160px;
+      background: white;
+      padding: 8px 8px 24px 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+      border-radius: 6px;
+      transform: rotate(-2deg);
+      scroll-snap-align: start;
+    }
+    .polaroid:nth-child(2){ transform: rotate(1.5deg); }
+    .polaroid:nth-child(3){ transform: rotate(-1deg); }
+
+    .polaroid img{
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #eee;
+      display:block;
+    }
+
+    input, select, .submit-btn, .map-btn, .tg-btn{
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      outline: none;
+    }
+
+    .submit-btn, .map-btn, .tg-btn{
+      border-bottom: none;
+      color: #fcf6ba;
+      border: 1px solid var(--gold);
+      border-radius: 22px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+      background: var(--bg-gradient);
+      transition: transform .18s ease, opacity .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .submit-btn:hover, .map-btn:hover, .tg-btn:hover{ transform: translateY(-1px); }
+
+    .map-btn{ background: #8a1c1c; }
+    .tg-btn{
+      background: linear-gradient(180deg, rgba(0, 136, 204, .95), rgba(0, 106, 160, .95));
+      border-color: rgba(200, 230, 255, .45);
+    }
+
+    /* Передняя обложка визуал */
+    #p1 .front{
+      background: #2b1331;
+      border: 4px double var(--gold);
+      justify-content: center;
+    }
+    /* Внутренняя сторона обложки (изнутри) — пусть тоже будет красивой, чтобы не выглядело как "пропало" */
+    #p1 .back{
+      background:
+        radial-gradient(circle at 50% 40%, rgba(252,246,186,.10), transparent 55%),
+        repeating-linear-gradient(45deg, rgba(197,160,89,0.10) 0, rgba(197,160,89,0.10) 10px, transparent 10px, transparent 22px);
+      border: 2px solid rgba(197,160,89,.35);
+    }
+
+    .cover-runes{
+      width: 100%;
+      opacity: .9;
+      margin: 10px 0 6px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .page, .content-box, .book, .book::before, .backCover::before{ transition: none !important; animation: none !important; }
+      .page.turning .front::before{ display:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <button class="music-btn" id="musicBtn" type="button" aria-label="Music">🎵</button>
+
+  <audio id="bg-music" loop preload="auto">
+    <source src="Music.mp3" type="audio/mpeg">
+  </audio>
+
+  <canvas id="fx"></canvas>
+
+  <div class="book" id="book">
+    <!-- Задняя обложка (книга закрылась) -->
+    <div class="backCover" id="backCover">
+      <svg class="cover-runes" viewBox="0 0 600 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="margin-bottom:10px;">
+        <defs>
+          <linearGradient id="g2" x1="0" x2="1">
+            <stop offset="0" stop-color="#bf953f" stop-opacity=".9"/>
+            <stop offset=".5" stop-color="#fcf6ba" stop-opacity=".95"/>
+            <stop offset="1" stop-color="#b38728" stop-opacity=".9"/>
+          </linearGradient>
+        </defs>
+        <path d="M40,45 C120,80 200,80 300,45 C400,10 480,10 560,45"
+              fill="none" stroke="url(#g2)" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+        <circle cx="300" cy="45" r="10" fill="none" stroke="url(#g2)" stroke-width="3" opacity=".9"/>
+        <path d="M292,45 L308,45 M300,37 L300,53" stroke="url(#g2)" stroke-width="3" opacity=".9"/>
+      </svg>
+
+      <h1>До<br>встречи!</h1>
+      <p style="color:#d7d7d7; margin-top:4px;">Жду тебя на празднике</p>
+
+      <div class="nav-container" style="justify-content:center; margin-top:24px;">
+        <!-- Перезапуск: закрытая книга -> снова к первой обложке -->
+        <button class="btn-nav rot180" id="restartBtn" aria-label="Назад">&#10140;</button>
+      </div>
+    </div>
+
+    <!-- PAGE 1: передняя обложка -->
+    <div class="page cover active-page" id="p1">
+      <div class="front">
+        <div class="content-box" style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+          <div style="color:var(--gold); font-size:1.08rem; letter-spacing:2px;">ПРИГЛАШЕНИЕ</div>
+
+          <svg class="cover-runes" viewBox="0 0 600 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1">
+                <stop offset="0" stop-color="#bf953f" stop-opacity=".9"/>
+                <stop offset=".5" stop-color="#fcf6ba" stop-opacity=".95"/>
+                <stop offset="1" stop-color="#b38728" stop-opacity=".9"/>
+              </linearGradient>
+            </defs>
+            <path d="M40,45 C120,10 200,10 300,45 C400,80 480,80 560,45"
+                  fill="none" stroke="url(#g)" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+            <path d="M70,45 L110,45 M490,45 L530,45" stroke="url(#g)" stroke-width="3" opacity=".7"/>
+            <circle cx="300" cy="45" r="10" fill="none" stroke="url(#g)" stroke-width="3" opacity=".9"/>
+            <path d="M292,45 L308,45 M300,37 L300,53" stroke="url(#g)" stroke-width="3" opacity=".9"/>
+          </svg>
+
+          <h1>Magic<br>Party</h1>
+          <div style="font-size:2.45rem; margin:14px 0 10px; color:#fff;">✨ 18 ✨</div>
+          <p style="color:#d7d7d7; margin-top:0;">ЯНВАРЯ</p>
+
+          <div class="nav-container" style="justify-content:center; margin-top:26px;">
+            <button class="btn-nav" id="openBtn">Открыть &#10140;</button>
+          </div>
+        </div>
+      </div>
+      <div class="back"></div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page" id="p2">
+      <div class="front">
+        <div class="content-box">
+          <div class="icon-lg">🏰</div>
+          <h2>Добро пожаловать!</h2>
+          <p>В жизни бывают моменты, которые хочется разделить только с самыми близкими.</p>
+          <p>Этот день для меня особенный, и я не могу представить его без тебя!</p>
+          <p>Давай создадим волшебные воспоминания вместе ✨</p>
+
+          <svg class="divider" viewBox="0 0 100 10" aria-hidden="true">
+            <path d="M0 5 L100 5" stroke-dasharray="4" />
+          </svg>
+
+          <div class="nav-container">
+            <button class="btn-nav rot180" data-prev>&#10140;</button>
+            <button class="btn-nav" data-next>Далее &#10140;</button>
+          </div>
+        </div>
+      </div>
+      <div class="back"></div>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="page" id="p3">
+      <div class="front">
+        <div class="content-box">
+          <div class="icon-lg">🕰️</div>
+          <h2>Программа</h2>
+
+          <div style="text-align:left; margin:14px 0 8px; padding-left: 10px;">
+            <p><strong>16:00</strong> — Сбор гостей 🥂</p>
+            <p><strong>17:00</strong> — Банкет и конкурсы 🎉</p>
+            <p><strong>19:00</strong> — Караоке 🎤</p>
+            <p><strong>21:30</strong> — Торт 🎂</p>
+          </div>
+
+          <p class="muted" style="margin-top:6px;"><strong>Дресс-код:</strong> Magic &amp; Shine ✨</p>
+
+          <div class="countdown">
+            <div style="color:var(--red); font-family:'Great Vibes'; font-size:1.3rem; margin-bottom:6px;">До праздника:</div>
+            <div class="countdown-grid">
+              <div class="cd-item"><div class="cd-num" id="cd-days">0</div><div class="cd-lbl">дней</div></div>
+              <div class="cd-item"><div class="cd-num" id="cd-hours">00</div><div class="cd-lbl">час</div></div>
+              <div class="cd-item"><div class="cd-num" id="cd-mins">00</div><div class="cd-lbl">мин</div></div>
+              <div class="cd-item"><div class="cd-num" id="cd-secs">00</div><div class="cd-lbl">сек</div></div>
+            </div>
+          </div>
+
+          <div class="nav-container">
+            <button class="btn-nav rot180" data-prev>&#10140;</button>
+            <button class="btn-nav" data-next>Место &#10140;</button>
+          </div>
+        </div>
+      </div>
+      <div class="back"></div>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="page" id="p4">
+      <div class="front">
+        <div class="content-box">
+          <h2>Локация</h2>
+          <p>Мы ждём тебя здесь:</p>
+
+          <div style="margin: 10px auto 12px; width: 200px; height: 160px; transform: rotate(-2deg); border: 4px solid #fff; box-shadow: 0 6px 14px rgba(0,0,0,0.22); overflow: hidden; border-radius: 10px;">
+            <img src="photo.jpg" alt="Место" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+
+          <a href="#" target="_blank" class="map-btn" id="mapBtn" rel="noopener">📍 Открыть карту</a>
+
+          <p class="muted" style="margin-bottom:4px;">Нажми, чтобы построить маршрут</p>
+          <p class="muted" style="margin-top:0;">Вопросы? Пиши: <strong id="contactTg">@your_contact</strong></p>
+
+          <div class="nav-container">
+            <button class="btn-nav rot180" data-prev>&#10140;</button>
+            <button class="btn-nav" data-next>Фото &#10140;</button>
+          </div>
+        </div>
+      </div>
+      <div class="back"></div>
+    </div>
+
+    <!-- PAGE 5 -->
+    <div class="page" id="p5">
+      <div class="front">
+        <div class="content-box">
+          <div class="icon-lg">📸</div>
+          <h2>Воспоминания</h2>
+          <p class="muted">Листай фото вправо — страницы не перелистнутся ✨</p>
+
+          <div class="gallery" id="photoGallery">
+            <div class="polaroid"><img src="gallery1.jpg" alt="Фото 1"></div>
+            <div class="polaroid"><img src="gallery2.jpg" alt="Фото 2"></div>
+            <div class="polaroid"><img src="gallery3.jpg" alt="Фото 3"></div>
+          </div>
+
+          <div class="nav-container">
+            <button class="btn-nav rot180" data-prev>&#10140;</button>
+            <button class="btn-nav" data-next>Ответ &#10140;</button>
+          </div>
+        </div>
+      </div>
+      <div class="back"></div>
+    </div>
+
+    <!-- PAGE 6 RSVP -->
+    <div class="page" id="p6">
+      <div class="front">
+        <div class="content-box">
+          <div class="icon-lg">💌</div>
+          <h2>Подтверждение</h2>
+          <p>Твоё присутствие — лучший подарок! Ответь до <strong>10 января</strong></p>
+
+          <form id="rsvpForm" novalidate>
+            <input type="text" id="company" name="company" autocomplete="off" tabindex="-1"
+                   style="position:absolute; left:-9999px; opacity:0;" aria-hidden="true">
+            <input type="text" id="name" placeholder="Имя и Фамилия" required>
+            <select id="status">
+              <option value="Я буду! 🥳">Я буду! 🥳</option>
+              <option value="С парой 👫">С парой 👫</option>
+              <option value="Не смогу 😢">Не смогу 😢</option>
+            </select>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Отправить ворона</button>
+            <a class="tg-btn" id="tgFallback" href="#" target="_blank" rel="noopener" style="display:none;">✉️ Ответить в Telegram</a>
+          </form>
+
+          <div id="responseMessage" style="margin-top:10px;font-weight:bold;"></div>
+
+          <div class="nav-container">
+            <button class="btn-nav rot180" data-prev>&#10140;</button>
+            <!-- Пропуск = закрываем книгу на заднюю обложку -->
+            <button class="btn-nav" id="skipBtn" style="opacity:.55; font-size:1rem;">Пропустить</button>
+          </div>
+        </div>
+      </div>
+      <div class="back"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // =========================
+    // НАСТРОЙКИ ПОД ТЕБЯ
+    // =========================
+    const RSVP_ENDPOINT = ""; // позже вставим URL функции (без токена в HTML)
+    const EVENT_DATE = new Date("2026-01-18T16:00:00");
+
+    const MAP_URL = "https://yandex.com/maps/-/CLgufJ~E";
+    const CONTACT_TG = "@your_contact";
+    const TG_FALLBACK_LINK = "https://t.me/your_contact";
+
+    // =========================
+    // КНИГА
+    // =========================
+    let current = 1;
+    const totalPages = 6;
+    const getPage = (n) => document.getElementById("p" + n);
+
+    function setBodyMode(){
+      document.body.classList.toggle("opened", current >= 2);
+    }
+
+    function setActive(n){
+      for(let i=1;i<=totalPages;i++){
+        getPage(i).classList.remove("active-page","preactive");
+      }
+      getPage(n).classList.add("active-page");
+      current = n;
+      setBodyMode();
+    }
+
+    function markPreactive(n){
+      for(let i=1;i<=totalPages;i++) getPage(i).classList.remove("preactive");
+      if(n>=1 && n<=totalPages) getPage(n).classList.add("preactive");
+    }
+
+    function markTurning(pageNums){
+      pageNums.forEach(i => getPage(i).classList.add("turning"));
+      setTimeout(() => pageNums.forEach(i => getPage(i).classList.remove("turning")), 980);
+    }
+
+    function flipTo(n){
+      if(n < 1 || n > totalPages || n === current) return;
+      if(document.body.classList.contains("back-closed")) return;
+
+      const from = current;
+      const to = n;
+      const goingNext = to > from;
+
+      markPreactive(to);
+
+      if(goingNext){
+        const nums = [];
+        for(let i=from; i<to; i++) nums.push(i);
+        markTurning(nums);
+        for(let i=from; i<to; i++) getPage(i).classList.add("flipped");
+      }else{
+        const nums = [];
+        for(let i=to; i<from; i++) nums.push(i);
+        markTurning(nums);
+        for(let i=to; i<from; i++) getPage(i).classList.remove("flipped");
+      }
+
+      // делаем активной чуть позже → ощущение листа, но без "пустоты"
+      setTimeout(() => setActive(to), 260);
+    }
+
+    function next(){
+      if(current === totalPages){
+        closeToBackCover();
+      }else{
+        flipTo(current + 1);
+      }
+    }
+    function prev(){ flipTo(current - 1); }
+
+    // Закрыть книгу и показать заднюю обложку
+    function closeToBackCover(){
+      // аккуратно убираем активность страниц
+      for(let i=1;i<=totalPages;i++){
+        getPage(i).classList.remove("active-page","preactive");
+      }
+      document.body.classList.add("back-closed");
+    }
+
+    function restartFromBackCover(){
+      document.body.classList.remove("back-closed");
+      // Сброс книги: вернуть все листы в исходное
+      for(let i=1;i<=totalPages;i++){
+        getPage(i).classList.remove("flipped","turning","preactive","active-page");
+      }
+      current = 1;
+      setActive(1);
+    }
+
+    // кнопки
+    document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", next));
+    document.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", prev));
+    document.getElementById("skipBtn").addEventListener("click", (e)=>{ e.preventDefault(); closeToBackCover(); });
+    document.getElementById("restartBtn").addEventListener("click", restartFromBackCover);
+
+    // open
+    const openBtn = document.getElementById("openBtn");
+    openBtn.addEventListener("click", async () => {
+      flipTo(2);
+      try{ await audio.play(); setMusicUI(true); }catch(e){}
+    });
+
+    // =========================
+    // ТАЙМЕР
+    // =========================
+    function updateTimer(){
+      const now = new Date();
+      const diff = EVENT_DATE - now;
+      if(diff <= 0) return;
+
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff / (1000*60*60)) % 24);
+      const m = Math.floor((diff / (1000*60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+
+      const pad = (x) => String(x).padStart(2,"0");
+      document.getElementById("cd-days").innerText = d;
+      document.getElementById("cd-hours").innerText = pad(h);
+      document.getElementById("cd-mins").innerText = pad(m);
+      document.getElementById("cd-secs").innerText = pad(s);
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // =========================
+    // RSVP (без токена в HTML)
+    // =========================
+    const rsvpForm = document.getElementById("rsvpForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const responseMessage = document.getElementById("responseMessage");
+    const tgFallback = document.getElementById("tgFallback");
+    let lastSendAt = 0;
+
+    function showFallbackLink(text){
+      tgFallback.style.display = "inline-block";
+      tgFallback.href = TG_FALLBACK_LINK;
+      tgFallback.textContent = text || "✉️ Ответить в Telegram";
+    }
+
+    rsvpForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const now = Date.now();
+      if(now - lastSendAt < 6000) return;
+      lastSendAt = now;
+
+      const hp = document.getElementById("company")?.value?.trim();
+      if(hp){
+        responseMessage.textContent = "Спасибо! ✨";
+        responseMessage.style.color = "#4CAF50";
+        setTimeout(closeToBackCover, 900);
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+      const status = document.getElementById("status").value;
+
+      if(!name){
+        responseMessage.textContent = "Пожалуйста, введи имя 🙂";
+        responseMessage.style.color = "#f44336";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Отправка...";
+      tgFallback.style.display = "none";
+      responseMessage.textContent = "";
+
+      if(!RSVP_ENDPOINT){
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Отправить ворона";
+        responseMessage.textContent = "RSVP ещё не подключён. Можно ответить вручную в Telegram.";
+        responseMessage.style.color = "#f39c12";
+        showFallbackLink("✉️ Ответить организатору");
+        return;
+      }
+
+      try{
+        const payload = { name, status, ts: new Date().toISOString() };
+        const res = await fetch(RSVP_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok) throw new Error("Bad status: " + res.status);
+
+        submitBtn.textContent = "Готово!";
+        submitBtn.style.background = "#4CAF50";
+        responseMessage.textContent = "Спасибо! Ответ принят ✨";
+        responseMessage.style.color = "#4CAF50";
+        setTimeout(closeToBackCover, 1200);
+      } catch(err){
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Повторить";
+        submitBtn.style.background = "#f44336";
+        responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
+        responseMessage.style.color = "#f44336";
+        showFallbackLink("✉️ Ответить в Telegram");
+      }
+    });
+
+    // =========================
+    // МУЗЫКА
+    // =========================
+    const musicBtn = document.getElementById("musicBtn");
+    const audio = document.getElementById("bg-music");
+
+    function setMusicUI(playing){
+      if(playing) musicBtn.classList.add("is-playing");
+      else musicBtn.classList.remove("is-playing");
+    }
+
+    musicBtn.addEventListener("click", async () => {
+      try{
+        if(audio.paused){
+          await audio.play();
+          setMusicUI(true);
+        }else{
+          audio.pause();
+          setMusicUI(false);
+        }
+      }catch(e){}
+    });
+
+    // =========================
+    // СВАЙП (с учётом галереи)
+    // =========================
+    let startX=0, startY=0, swipingGallery=false;
+
+    document.addEventListener("touchstart", (e) => {
+      const t = e.changedTouches[0];
+      startX = t.screenX;
+      startY = t.screenY;
+      swipingGallery = !!(e.target.closest && e.target.closest(".gallery"));
+    }, { passive: true });
+
+    document.addEventListener("touchend", (e) => {
+      if(document.body.classList.contains("back-closed")) return;
+
+      const target = e.target;
+      if (target.tagName === "INPUT" || target.tagName === "BUTTON" || target.tagName === "SELECT" || target.closest("a")) return;
+      if (swipingGallery) return;
+
+      const t = e.changedTouches[0];
+      const dx = t.screenX - startX;
+      const dy = t.screenY - startY;
+
+      if(Math.abs(dy) > Math.abs(dx)) return;
+      if(dx < -60) next();
+      if(dx > 60) prev();
+    }, { passive: true });
+
+    window.addEventListener("keydown", (e) => {
+      if(document.body.classList.contains("back-closed")) return;
+      if(e.key === "ArrowRight") next();
+      if(e.key === "ArrowLeft") prev();
+    });
+
+    // =========================
+    // FX CANVAS: снег + золотая пыль
+    // =========================
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d", { alpha:true });
+
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let W=0,H=0,DPR=1;
+    const snow=[], motes=[];
+
+    function resize(){
+      DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+
+      canvas.width = Math.floor(W*DPR);
+      canvas.height = Math.floor(H*DPR);
+      canvas.style.width = W+"px";
+      canvas.style.height = H+"px";
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+
+      snow.length=0; motes.length=0;
+
+      const snowCount = Math.round(Math.min(170, Math.max(90, W/6)));
+      const moteCount = 30;
+
+      for(let i=0;i<snowCount;i++){
+        snow.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          r: Math.random()*1.8 + 0.6,
+          vy: Math.random()*0.9 + 0.35,
+          vx: (Math.random()-0.5)*0.20,
+          phase: Math.random()*Math.PI*2,
+          omega: Math.random()*0.02 + 0.008,
+          alpha: Math.random()*0.30 + 0.16
+        });
+      }
+      for(let i=0;i<moteCount;i++){
+        motes.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          r: Math.random()*2.6 + 1.2,
+          vy: (Math.random()-0.5)*0.16,
+          vx: (Math.random()-0.5)*0.16,
+          alpha: Math.random()*0.22 + 0.12
+        });
+      }
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+
+      // золото
+      for(const p of motes){
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < -10) p.x = W+10;
+        if(p.x > W+10) p.x = -10;
+        if(p.y < -10) p.y = H+10;
+        if(p.y > H+10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(197,160,89,${p.alpha})`;
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      // снег
+      for(const f of snow){
+        f.phase += f.omega;
+        f.y += f.vy;
+        f.x += Math.sin(f.phase)*0.35 + f.vx;
+
+        if(f.y > H+10){ f.y = -10; f.x = Math.random()*W; }
+        if(f.x < -10) f.x = W+10;
+        if(f.x > W+10) f.x = -10;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
+        ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+        ctx.fill();
+
+        // легкий тёплый “блик” на снежинке (чтобы вписался в золото)
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(252,246,186,${Math.max(0,f.alpha-0.10)})`;
+        ctx.arc(f.x - f.r*0.25, f.y - f.r*0.25, f.r*0.45, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener("resize", resize, { passive:true });
+    resize();
+    if(!reduceMotion) requestAnimationFrame(draw);
+
+    // =========================
+    // Привязки
+    // =========================
+    document.getElementById("mapBtn").href = MAP_URL;
+    document.getElementById("contactTg").textContent = CONTACT_TG;
+    setBodyMode();
+  </script>
+</body>
+</html>
