@@ -1212,9 +1212,10 @@
 
       try{
         const payload = { name, status, ts: new Date().toISOString() };
-        const res = await fetch(CONFIG.rsvpEndpoint, {
+        await fetch(CONFIG.rsvpEndpoint, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
         if(!res.ok) throw new Error("Bad status: " + res.status);
