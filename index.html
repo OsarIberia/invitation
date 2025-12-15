@@ -1212,37 +1212,41 @@ rsvpForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  try{
-    const payload = { name, status, ts: new Date().toISOString() };
+try {
+  const payload = { name, status, ts: new Date().toISOString() };
 
-    await fetch(CONFIG.rsvpEndpoint, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
+  // отправляем
+  await fetch(CONFIG.rsvpEndpoint, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
 
-    // В no-cors ответ opaque, его нельзя проверить через res.ok — считаем успехом,
-    // если запрос не упал с ошибкой сети.
-    submitBtn.disabled = true;
-    submitBtn.textContent = "✅ Отправлено";
-    submitBtn.style.background = "#2e7d32";
-    responseMessage.textContent = "Готово! Мы получили твой ответ ✨";
-    responseMessage.style.color = "#2e7d32";
-    setTimeout(closeToBackCover, 1200);
+} catch (err) {
+  console.error("RSVP fetch error:", err);
 
-  } catch(err){
-    console.error("RSVP error:", err);
+  // если реально не смогли отправить — показываем Telegram
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Повторить";
+  submitBtn.style.background = "#f44336";
+  responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
+  responseMessage.style.color = "#f44336";
+  showFallbackLink("Ответить в Telegram", name, status);
+  return;
+}
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Повторить";
-    submitBtn.style.background = "#f44336";
-    responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
-    responseMessage.style.color = "#f44336";
-    showFallbackLink("Ответить в Telegram", name, status);
-  }
-});
+// ✅ Если дошли сюда — запрос УШЁЛ (и раз у тебя есть запись в Executions — значит точно ушёл)
+submitBtn.disabled = true;
+submitBtn.textContent = "✅ Отправлено";
+submitBtn.style.background = "#2e7d32";
+responseMessage.textContent = "Готово! Мы получили твой ответ ✨";
+responseMessage.style.color = "#2e7d32";
 
+// чтобы не падало, даже если функции нет
+if (typeof closeToBackCover === "function") {
+  setTimeout(closeToBackCover, 1200);
+}
 
     // ============================================================
     // МУЗЫКА
