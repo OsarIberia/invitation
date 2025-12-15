@@ -1154,86 +1154,95 @@
     updateTimer();
 
     // ============================================================
-    // RSVP
-    // ============================================================
-    const rsvpForm = document.getElementById("rsvpForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const responseMessage = document.getElementById("responseMessage");
-    const tgFallback = document.getElementById("tgFallback");
-    let lastSendAt = 0;
+// RSVP
+// ============================================================
+const rsvpForm = document.getElementById("rsvpForm");
+const submitBtn = document.getElementById("submitBtn");
+const responseMessage = document.getElementById("responseMessage");
+const tgFallback = document.getElementById("tgFallback");
+let lastSendAt = 0;
 
-    function showFallbackLink(text, name, status){
-      const msg = encodeURIComponent(`Юбилей: ${name || ""}\nОтвет: ${status || ""}`);
-      const base = CONFIG.tgFallbackLink;
-      const url = base.includes("?") ? (base + "&text=" + msg) : (base + "?text=" + msg);
+function showFallbackLink(text, name, status){
+  const msg = encodeURIComponent(`Юбилей: ${name || ""}\nОтвет: ${status || ""}`);
+  const base = CONFIG.tgFallbackLink;
+  const url = base.includes("?") ? (base + "&text=" + msg) : (base + "?text=" + msg);
 
-      tgFallback.style.display = "inline-block";
-      tgFallback.href = url;
-      tgFallback.textContent = text || "Ответить в Telegram";
-    }
+  tgFallback.style.display = "inline-block";
+  tgFallback.href = url;
+  tgFallback.textContent = text || "Ответить в Telegram";
+}
 
-    rsvpForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+rsvpForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      const now = Date.now();
-      if(now - lastSendAt < 6000) return;
-      lastSendAt = now;
+  const now = Date.now();
+  if(now - lastSendAt < 6000) return;
+  lastSendAt = now;
 
-      const hp = document.getElementById("company")?.value?.trim();
-      if(hp){
-        responseMessage.textContent = "Спасибо!";
-        responseMessage.style.color = "#4CAF50";
-        setTimeout(closeToBackCover, 900);
-        return;
-      }
+  const hp = document.getElementById("company")?.value?.trim();
+  if(hp){
+    responseMessage.textContent = "Спасибо! ✨";
+    responseMessage.style.color = "#2e7d32";
+    setTimeout(closeToBackCover, 900);
+    return;
+  }
 
-      const name = document.getElementById("name").value.trim();
-      const status = document.getElementById("status").value;
+  const name = document.getElementById("name").value.trim();
+  const status = document.getElementById("status").value;
 
-      if(!name){
-        responseMessage.textContent = "Пожалуйста, введи имя 🙂";
-        responseMessage.style.color = "#f44336";
-        return;
-      }
+  if(!name){
+    responseMessage.textContent = "Пожалуйста, введи имя 🙂";
+    responseMessage.style.color = "#f44336";
+    return;
+  }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Отправка...";
-      tgFallback.style.display = "none";
-      responseMessage.textContent = "";
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Отправляем…";
+  submitBtn.style.background = "";
+  tgFallback.style.display = "none";
+  responseMessage.textContent = "Секунду…";
+  responseMessage.style.color = "#6e6e6e";
 
-      if(!CONFIG.rsvpEndpoint){
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Отправить ответ";
-        responseMessage.textContent = "Форма ещё не подключена — можно ответить организатору в Telegram.";
-        responseMessage.style.color = "#b07b12";
-        showFallbackLink("Ответить организатору", name, status);
-        return;
-      }
+  if(!CONFIG.rsvpEndpoint){
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Отправить ответ";
+    responseMessage.textContent = "Форма ещё не подключена — можно ответить организатору в Telegram.";
+    responseMessage.style.color = "#b07b12";
+    showFallbackLink("Ответить организатору", name, status);
+    return;
+  }
 
-      try{
-        const payload = { name, status, ts: new Date().toISOString() };
-        await fetch(CONFIG.rsvpEndpoint, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-        if(!res.ok) throw new Error("Bad status: " + res.status);
+  try{
+    const payload = { name, status, ts: new Date().toISOString() };
 
-        submitBtn.textContent = "Готово!";
-        submitBtn.style.background = "#4CAF50";
-        responseMessage.textContent = "Спасибо! Ответ принят.";
-        responseMessage.style.color = "#4CAF50";
-        setTimeout(closeToBackCover, 1200);
-      } catch(err){
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Повторить";
-        submitBtn.style.background = "#f44336";
-        responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
-        responseMessage.style.color = "#f44336";
-        showFallbackLink("Ответить в Telegram", name, status);
-      }
+    await fetch(CONFIG.rsvpEndpoint, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
     });
+
+    // В no-cors ответ opaque, его нельзя проверить через res.ok — считаем успехом,
+    // если запрос не упал с ошибкой сети.
+    submitBtn.disabled = true;
+    submitBtn.textContent = "✅ Отправлено";
+    submitBtn.style.background = "#2e7d32";
+    responseMessage.textContent = "Готово! Мы получили твой ответ ✨";
+    responseMessage.style.color = "#2e7d32";
+    setTimeout(closeToBackCover, 1200);
+
+  } catch(err){
+    console.error("RSVP error:", err);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Повторить";
+    submitBtn.style.background = "#f44336";
+    responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
+    responseMessage.style.color = "#f44336";
+    showFallbackLink("Ответить в Telegram", name, status);
+  }
+});
+
 
     // ============================================================
     // МУЗЫКА
