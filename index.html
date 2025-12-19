@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <!-- ===== OpenGraph (под GitHub Pages лучше указать полный URL) ===== -->
   <meta property="og:title" content="Приглашение на Юбилей" />
   <meta property="og:description" content="18 января. Будем очень ждать!" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="photo.jpg" />
-  <meta property="og:url" content="https://example.com/invite" />
+  <meta property="og:url" content="" />
 
   <meta name="theme-color" content="#2b1331" />
   <title>Приглашение</title>
@@ -450,7 +449,7 @@
       100%{ stroke-dashoffset: 0; opacity: 1; }
     }
 
-    /* ===== TYPEWRITER: курсор без влияния на переносы ===== */
+    /* ===== TYPEWRITER: курсор ===== */
     [data-typewriter]{
       border-right: 1px solid rgba(138,28,28,0);
       padding-right: 4px;
@@ -463,7 +462,7 @@
       46%,100%{ border-right-color: rgba(138,28,28,.55); }
     }
 
-    /* ===== “Белая подложка” для печатающегося текста + fade-in ===== */
+    /* ===== “Белая подложка” (без transform -> не обрезается) ===== */
     .tw-card{
       margin: 12px auto 0;
       padding: 12px 14px;
@@ -471,15 +470,10 @@
       border: 1px solid rgba(197,160,89,.30);
       background: rgba(255,255,255,0.55);
       text-align: left;
-
       opacity: 0;
-      transform: translateY(6px);
-      transition: opacity .55s ease, transform .55s ease;
+      transition: opacity .55s ease;
     }
-    .tw-card.is-visible{
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .tw-card.is-visible{ opacity: 1; }
 
     /* ===== Таймлайн ===== */
     .timeline{
@@ -533,22 +527,31 @@
       color: #2f2f2f;
     }
 
-    /* ===== ГАЛЕРЕЯ ===== */
-    .gallery{
+    /* ===== Фото-конвейер (один ряд, бесшовно) ===== */
+    .conveyor{
+      width: 100%;
+      overflow: hidden;
+      padding: 10px 6px 12px;
+      user-select: none;
+
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    }
+    .track{
       display: flex;
       gap: 10px;
-      overflow-x: auto;
-      padding: 10px 6px 12px;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      touch-action: pan-x;
-      scroll-snap-type: x mandatory;
-      overscroll-behavior-x: contain;
-      user-select: none;
-      cursor: grab;
+      width: max-content;
+      will-change: transform;
+      animation: marquee 34s linear infinite;
     }
-    .gallery:active{ cursor: grabbing; }
-    .gallery::-webkit-scrollbar{ display: none; }
+    .conveyor:hover .track,
+    .conveyor.is-paused .track{
+      animation-play-state: paused;
+    }
+    @keyframes marquee{
+      from{ transform: translateX(0); }
+      to{ transform: translateX(calc(-1 * var(--marquee-x, 0px))); }
+    }
 
     .polaroid{
       flex: 0 0 auto;
@@ -559,10 +562,10 @@
       border-radius: 8px;
       transform: rotate(-1.6deg);
       scroll-snap-align: start;
+      cursor: pointer;
     }
-    .polaroid:nth-child(2){ transform: rotate(1.1deg); }
-    .polaroid:nth-child(3){ transform: rotate(-0.8deg); }
-    .polaroid:nth-child(4){ transform: rotate(0.6deg); }
+    .polaroid:nth-child(2n){ transform: rotate(1.1deg); }
+    .polaroid:nth-child(3n){ transform: rotate(-0.8deg); }
 
     .polaroid img{
       width: 100%;
@@ -635,13 +638,62 @@
       filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
     }
 
+    /* ===== Lightbox ===== */
+    .lightbox{
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 12, 41, 0.70);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 18px 14px calc(18px + var(--safe-bottom));
+    }
+    .lb-card{
+      width: min(720px, 94vw);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(197,160,89,.35);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+    .lb-img{
+      width: 100%;
+      height: min(72vh, 560px);
+      object-fit: contain;
+      background: rgba(255,255,255,0.60);
+      display: block;
+    }
+    .lb-footer{
+      padding: 10px 12px 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .lb-cap{
+      font-size: 1.02rem;
+      color: #2f2f2f;
+      text-align: center;
+    }
+    .lb-close{
+      border: 1px solid rgba(197,160,89,.55);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: #2b1331;
+      color: #fcf6ba;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.06rem;
+    }
+
     @media (prefers-reduced-motion: reduce){
       .page, .content-box, .book, .book::before, .backCover::before{ transition: none !important; animation: none !important; }
       .page.turning .front::before{ display:none !important; }
       .sketch path{ animation: none !important; opacity: 1 !important; stroke-dashoffset: 0 !important; }
       .tw{ animation: none !important; border-right-color: rgba(138,28,28,0) !important; }
-      .tw-card{ opacity: 1 !important; transform: none !important; transition: none !important; }
-      .gallery{ scroll-snap-type: none !important; }
+      .tw-card{ opacity: 1 !important; transition: none !important; }
+      .track{ animation: none !important; }
     }
   </style>
 </head>
@@ -679,7 +731,7 @@
       </div>
     </div>
 
-    <!-- PAGE 1: обложка (без возраста) -->
+    <!-- PAGE 1 -->
     <div class="page cover active-page" id="p1">
       <div class="front">
         <div class="content-box" style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
@@ -720,7 +772,7 @@
           <h2>С любовью</h2>
 
           <p data-typewriter data-speed="22">
-            Сегодня мы открываем книгу, где каждая глава — тёплая, светлая и настоящая.
+            Дорогие гости, мы вместе с Вами хотим сказать самые тёплые слова имениннице. Сегодня мы открываем книгу, где каждая глава — тёплая, светлая и настоящая.
             В этот день хочется сказать главное: мы рядом, и мы очень тебя любим.
           </p>
           <p class="muted" style="text-align:right; margin-top:8px;" id="introSign">— твоя семья</p>
@@ -784,7 +836,7 @@
       <div class="back"></div>
     </div>
 
-    <!-- PAGE 4 (Дом и тепло — тут раньше "прыгало") -->
+    <!-- PAGE 4 -->
     <div class="page" id="p4">
       <div class="front">
         <div class="content-box">
@@ -881,24 +933,44 @@
         <div class="content-box">
           <div class="icon-lg">🖼️</div>
           <h2>Воспоминания</h2>
-          <p class="muted">Листай фото вправо — страницы не перелистнутся.</p>
+          <p class="muted">Лента движется сама — можно остановить, нажав на фото ✨</p>
 
-          <div class="gallery" id="photoGallery">
-            <div class="polaroid">
-              <img src="gallery1.jpg" alt="Фото 1">
-              <div class="photo-caption">Тёплый семейный момент</div>
-            </div>
-            <div class="polaroid">
-              <img src="gallery2.jpg" alt="Фото 2">
-              <div class="photo-caption">Праздник, который мы помним</div>
-            </div>
-            <div class="polaroid">
-              <img src="gallery3.jpg" alt="Фото 3">
-              <div class="photo-caption">Счастье — в простых вещах</div>
-            </div>
-            <div class="polaroid">
-              <img src="gallery4.jpg" alt="Фото 4">
-              <div class="photo-caption">Улыбка, которая согревает</div>
+          <div class="conveyor" id="photoConveyor" aria-label="Фото-лента">
+            <div class="track" id="photoTrack">
+              <div class="polaroid" data-src="gallery1.jpg" data-cap="Тёплый семейный момент">
+                <img src="gallery1.jpg" alt="Фото 1">
+                <div class="photo-caption">Тёплый семейный момент</div>
+              </div>
+
+              <div class="polaroid" data-src="gallery2.jpg" data-cap="Праздник, который мы помним">
+                <img src="gallery2.jpg" alt="Фото 2">
+                <div class="photo-caption">Праздник, который мы помним</div>
+              </div>
+
+              <div class="polaroid" data-src="gallery3.jpg" data-cap="Счастье — в простых вещах">
+                <img src="gallery3.jpg" alt="Фото 3">
+                <div class="photo-caption">Счастье — в простых вещах</div>
+              </div>
+
+              <div class="polaroid" data-src="gallery4.jpg" data-cap="Улыбка, которая согревает">
+                <img src="gallery4.jpg" alt="Фото 4">
+                <div class="photo-caption">Улыбка, которая согревает</div>
+              </div>
+
+              <div class="polaroid" data-src="gallery5.jpg" data-cap="Ещё один тёплый кадр">
+                <img src="gallery5.jpg" alt="Фото 5">
+                <div class="photo-caption">Когда радость собирает нас в один кадр</div>
+              </div>
+
+              <div class="polaroid" data-src="gallery6.jpg" data-cap="Момент, который хочется хранить">
+                <img src="gallery6.jpg" alt="Фото 6">
+                <div class="photo-caption">Секреты на заднем сиденье и смех вполголоса</div>
+              </div>
+
+              <div class="polaroid" data-src="gallery7.jpg" data-cap="Семья — это счастье">
+                <img src="gallery7.jpg" alt="Фото 7">
+                <div class="photo-caption">Семья — это счастье</div>
+              </div>
             </div>
           </div>
 
@@ -943,12 +1015,22 @@
       </div>
       <div class="back"></div>
     </div>
+  </div>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lb-card" role="dialog" aria-modal="true" aria-label="Просмотр фото">
+      <img class="lb-img" id="lbImg" alt="Фото">
+      <div class="lb-footer">
+        <div class="lb-cap" id="lbCap"></div>
+        <button class="lb-close" id="lbClose" type="button">Убрать</button>
+      </div>
+    </div>
   </div>
 
   <script>
     // ============================================================
-    // НАСТРОЙКИ
+    // НАСТРОЙКИ (поменяй тут только значения)
     // ============================================================
     const CONFIG = {
       celebrantName: "Юбилей Людмилы Живитченко",
@@ -958,10 +1040,9 @@
 
       mapUrl: "https://yandex.com/maps/-/CLgufJ~E",
       contactTg: "@Liudmila_Zhi",
-
       tgFallbackLink: "https://t.me/Liudmila_Zhi",
 
-      // Google Apps Script Web App URL (если пока пусто — покажем fallback в Telegram)
+      // твой Apps Script Web App:
       rsvpEndpoint: "https://script.google.com/macros/s/AKfycbyXbHRMg0dBTom3BK2hGJdiTxYCVEoA1Nb5XQB3-0reLbcepMQskHt_0SvSQFwAf5zl/exec",
 
       backCoverText: "Будем очень ждать"
@@ -1072,13 +1153,36 @@
     document.getElementById("skipBtn").addEventListener("click", (e)=>{ e.preventDefault(); closeToBackCover(); });
     document.getElementById("restartBtn").addEventListener("click", restartFromBackCover);
 
+    // ============================================================
+    // МУЗЫКА
+    // ============================================================
+    const musicBtn = document.getElementById("musicBtn");
+    const audio = document.getElementById("bg-music");
+
+    function setMusicUI(playing){
+      if(playing) musicBtn.classList.add("is-playing");
+      else musicBtn.classList.remove("is-playing");
+    }
+
     document.getElementById("openBtn").addEventListener("click", async () => {
       flipTo(2);
       try{ await audio.play(); setMusicUI(true); }catch(e){}
     });
 
+    musicBtn.addEventListener("click", async () => {
+      try{
+        if(audio.paused){
+          await audio.play();
+          setMusicUI(true);
+        }else{
+          audio.pause();
+          setMusicUI(false);
+        }
+      }catch(e){}
+    });
+
     // ============================================================
-    // TYPEWRITER (без "прыжков" + авто белая подложка + fade-in)
+    // TYPEWRITER
     // ============================================================
     function typewriter(el){
       if(!el || el.dataset.twDone === "1") return;
@@ -1087,10 +1191,9 @@
       const speed = Number(el.dataset.speed || 24);
       if(!original) return;
 
-      // авто белая подложка
       el.classList.add("tw-card");
 
-      // стабилизация высоты: замеряем высоту полного текста
+      // стабилизация высоты
       const prevVisibility = el.style.visibility;
       el.style.visibility = "hidden";
       el.textContent = original;
@@ -1099,7 +1202,6 @@
       el.style.minHeight = fullH + "px";
       el.style.visibility = prevVisibility || "";
 
-      // плавно проявляем подложку
       requestAnimationFrame(() => el.classList.add("is-visible"));
 
       el.dataset.twDone = "1";
@@ -1153,145 +1255,117 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
-  // ============================================================
-// RSVP
-// ============================================================
-const rsvpForm = document.getElementById("rsvpForm");
-const submitBtn = document.getElementById("submitBtn");
-const responseMessage = document.getElementById("responseMessage");
-const tgFallback = document.getElementById("tgFallback");
-let lastSendAt = 0;
-
-function showFallbackLink(text, name, status){
-  const msg = encodeURIComponent(`Юбилей: ${name || ""}\nОтвет: ${status || ""}`);
-  const base = CONFIG.tgFallbackLink;
-  const url = base.includes("?") ? (base + "&text=" + msg) : (base + "?text=" + msg);
-
-  tgFallback.style.display = "inline-block";
-  tgFallback.href = url;
-  tgFallback.textContent = text || "Ответить в Telegram";
-}
-
-async function sendRSVP(payload){
-  const url = (CONFIG.rsvpEndpoint || "").trim();
-  const data = JSON.stringify(payload);
-
-  // Самый надёжный способ для GitHub Pages → Apps Script
-  try{
-    const ok = navigator.sendBeacon(url, new Blob([data], { type: "text/plain;charset=utf-8" }));
-    if(ok) return true;
-  }catch(_){}
-
-  // Запасной вариант
-  await fetch(url, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: data
-  });
-
-  return true;
-}
-
-rsvpForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const now = Date.now();
-  if(now - lastSendAt < 6000) return;
-  lastSendAt = now;
-
-  const hp = document.getElementById("company")?.value?.trim();
-  if(hp){
-    responseMessage.textContent = "Спасибо! ✨";
-    responseMessage.style.color = "#2e7d32";
-    if (typeof closeToBackCover === "function") setTimeout(closeToBackCover, 900);
-    return;
-  }
-
-  const name = document.getElementById("name").value.trim();
-  const status = document.getElementById("status").value;
-
-  if(!name){
-    responseMessage.textContent = "Пожалуйста, введи имя 🙂";
-    responseMessage.style.color = "#f44336";
-    return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Отправляем…";
-  submitBtn.style.background = "";
-  tgFallback.style.display = "none";
-  responseMessage.textContent = "Секунду…";
-  responseMessage.style.color = "#6e6e6e";
-
-  if(!CONFIG.rsvpEndpoint){
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Отправить ответ";
-    responseMessage.textContent = "Форма ещё не подключена — можно ответить организатору в Telegram.";
-    responseMessage.style.color = "#b07b12";
-    showFallbackLink("Ответить организатору", name, status);
-    return;
-  }
-
-  try{
-    const payload = { name, status, ts: new Date().toISOString() };
-    await sendRSVP(payload);
-
-    // если дошли сюда — запрос ушёл
-    submitBtn.disabled = true;
-    submitBtn.textContent = "✅ Отправлено";
-    submitBtn.style.background = "#2e7d32";
-    responseMessage.textContent = "Готово! Мы получили твой ответ ✨";
-    responseMessage.style.color = "#2e7d32";
-
-    if (typeof closeToBackCover === "function") {
-      setTimeout(closeToBackCover, 1200);
-    }
-  } catch(err){
-    console.error("RSVP error:", err);
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Повторить";
-    submitBtn.style.background = "#f44336";
-    responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
-    responseMessage.style.color = "#f44336";
-    showFallbackLink("Ответить в Telegram", name, status);
-  }
-}); 
-
     // ============================================================
-    // МУЗЫКА
+    // RSVP (Beacon + fallback)
     // ============================================================
-    const musicBtn = document.getElementById("musicBtn");
-    const audio = document.getElementById("bg-music");
+    const rsvpForm = document.getElementById("rsvpForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const responseMessage = document.getElementById("responseMessage");
+    const tgFallback = document.getElementById("tgFallback");
+    let lastSendAt = 0;
 
-    function setMusicUI(playing){
-      if(playing) musicBtn.classList.add("is-playing");
-      else musicBtn.classList.remove("is-playing");
+    function showFallbackLink(text, name, status){
+      const msg = encodeURIComponent(`Юбилей: ${name || ""}\nОтвет: ${status || ""}`);
+      const base = CONFIG.tgFallbackLink;
+      const url = base.includes("?") ? (base + "&text=" + msg) : (base + "?text=" + msg);
+
+      tgFallback.style.display = "inline-block";
+      tgFallback.href = url;
+      tgFallback.textContent = text || "Ответить в Telegram";
     }
 
-    musicBtn.addEventListener("click", async () => {
+    async function sendRSVP(payload){
+      const url = (CONFIG.rsvpEndpoint || "").trim();
+      const data = JSON.stringify(payload);
+
       try{
-        if(audio.paused){
-          await audio.play();
-          setMusicUI(true);
-        }else{
-          audio.pause();
-          setMusicUI(false);
-        }
-      }catch(e){}
+        const ok = navigator.sendBeacon(url, new Blob([data], { type: "text/plain;charset=utf-8" }));
+        if(ok) return true;
+      }catch(_){}
+
+      await fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: data
+      });
+
+      return true;
+    }
+
+    rsvpForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const now = Date.now();
+      if(now - lastSendAt < 6000) return;
+      lastSendAt = now;
+
+      const hp = document.getElementById("company")?.value?.trim();
+      if(hp){
+        responseMessage.textContent = "Спасибо! ✨";
+        responseMessage.style.color = "#2e7d32";
+        setTimeout(closeToBackCover, 900);
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+      const status = document.getElementById("status").value;
+
+      if(!name){
+        responseMessage.textContent = "Пожалуйста, введи имя 🙂";
+        responseMessage.style.color = "#f44336";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Отправляем…";
+      submitBtn.style.background = "";
+      tgFallback.style.display = "none";
+      responseMessage.textContent = "Секунду…";
+      responseMessage.style.color = "#6e6e6e";
+
+      if(!CONFIG.rsvpEndpoint){
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Отправить ответ";
+        responseMessage.textContent = "Форма ещё не подключена — можно ответить организатору в Telegram.";
+        responseMessage.style.color = "#b07b12";
+        showFallbackLink("Ответить организатору", name, status);
+        return;
+      }
+
+      try{
+        const payload = { name, status, ts: new Date().toISOString() };
+        await sendRSVP(payload);
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "✅ Отправлено";
+        submitBtn.style.background = "#2e7d32";
+        responseMessage.textContent = "Готово! Мы получили твой ответ ✨";
+        responseMessage.style.color = "#2e7d32";
+
+        setTimeout(closeToBackCover, 1200);
+      } catch(err){
+        console.error("RSVP error:", err);
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Повторить";
+        submitBtn.style.background = "#f44336";
+        responseMessage.textContent = "Не удалось отправить. Нажми кнопку ниже и ответь в Telegram.";
+        responseMessage.style.color = "#f44336";
+        showFallbackLink("Ответить в Telegram", name, status);
+      }
     });
 
     // ============================================================
-    // СВАЙП ПО СТРАНИЦАМ (и защита от перелистывания при свайпе галереи)
+    // СВАЙП ПО СТРАНИЦАМ (не мешает конвейеру)
     // ============================================================
     let startX=0, startY=0, swipingGallery=false;
 
     function isInGallery(e){
       const t = e.target;
-      if(t && t.closest && t.closest(".gallery")) return true;
+      if(t && t.closest && t.closest(".conveyor")) return true;
       if(e.composedPath){
-        return e.composedPath().some(n => n && n.classList && n.classList.contains("gallery"));
+        return e.composedPath().some(n => n && n.classList && n.classList.contains("conveyor"));
       }
       return false;
     }
@@ -1323,44 +1397,62 @@ rsvpForm.addEventListener("submit", async (e) => {
       if(document.body.classList.contains("back-closed")) return;
       if(e.key === "ArrowRight") next();
       if(e.key === "ArrowLeft") prev();
+      if(e.key === "Escape") closeLb();
     });
 
     // ============================================================
-    // ГАЛЕРЕЯ: drag-to-scroll (стабильно везде)
+    // Lightbox
     // ============================================================
-    (function enableGalleryDrag(){
-      const g = document.getElementById("photoGallery");
-      if(!g) return;
+    const lightbox = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lbImg");
+    const lbCap = document.getElementById("lbCap");
+    const lbClose = document.getElementById("lbClose");
 
-      let isDown = false;
-      let startClientX = 0;
-      let startScrollLeft = 0;
+    function openLb(src, cap){
+      document.getElementById("photoConveyor")?.classList.add("is-paused");
+      lbImg.src = src;
+      lbCap.textContent = cap || "";
+      lightbox.style.display = "flex";
+      lightbox.setAttribute("aria-hidden", "false");
+    }
+    function closeLb(){
+      lightbox.style.display = "none";
+      lightbox.setAttribute("aria-hidden", "true");
+      lbImg.src = "";
+      document.getElementById("photoConveyor")?.classList.remove("is-paused");
+    }
 
-      const onDown = (e) => {
-        if(e.pointerType === "mouse" && e.button !== 0) return;
-        isDown = true;
-        startClientX = e.clientX;
-        startScrollLeft = g.scrollLeft;
-        try{ g.setPointerCapture(e.pointerId); }catch(_){}
-        e.stopPropagation();
-      };
+    lbClose.addEventListener("click", closeLb);
+    lightbox.addEventListener("click", (e) => {
+      if(e.target === lightbox) closeLb();
+    });
 
-      const onMove = (e) => {
-        if(!isDown) return;
-        const dx = e.clientX - startClientX;
-        g.scrollLeft = startScrollLeft - dx;
-        e.stopPropagation();
-      };
+    document.getElementById("photoTrack")?.addEventListener("click", (e) => {
+      const card = e.target.closest(".polaroid");
+      if(!card) return;
+      openLb(card.dataset.src, card.dataset.cap);
+    }, { passive: true });
 
-      const onUp = (e) => {
-        isDown = false;
-        e.stopPropagation();
-      };
+    // ============================================================
+    // Конвейер: бесшовный цикл
+    // ============================================================
+    (function initMarquee(){
+      const conveyor = document.getElementById("photoConveyor");
+      const track = document.getElementById("photoTrack");
+      if(!conveyor || !track) return;
 
-      g.addEventListener("pointerdown", onDown, { passive: true });
-      g.addEventListener("pointermove", onMove, { passive: true });
-      g.addEventListener("pointerup", onUp, { passive: true });
-      g.addEventListener("pointercancel", onUp, { passive: true });
+      if(track.dataset.duped === "1") return;
+      track.dataset.duped = "1";
+
+      track.innerHTML += track.innerHTML;
+
+      requestAnimationFrame(() => {
+        const half = Math.floor(track.scrollWidth / 2);
+        track.style.setProperty("--marquee-x", half + "px");
+      });
+
+      conveyor.addEventListener("pointerdown", () => conveyor.classList.add("is-paused"), { passive: true });
+      window.addEventListener("pointerup", () => conveyor.classList.remove("is-paused"), { passive: true });
     })();
 
     // ============================================================
